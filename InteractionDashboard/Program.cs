@@ -1,4 +1,6 @@
-using InteractionDashboard.Components;
+using Microsoft.EntityFrameworkCore;
+using TVInteractionDashboard.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddTelerikBlazor();
+builder.Services.AddDbContext<TVInteractionContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
 var app = builder.Build();
 

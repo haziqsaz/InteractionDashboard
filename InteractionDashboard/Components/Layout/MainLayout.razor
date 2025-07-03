@@ -1,17 +1,92 @@
 ﻿@inherits LayoutComponentBase
 
 <TelerikRootComponent>
+    <HeadContent>
+        <title>TV Interaction Dashboard</title>
+    </HeadContent>
+
+    <style>
+        .page {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(to bottom, #43B0C9, #16849D, #13687B, #1A5B89, #0E3663);
+            color: white;
+        }
+
+        .nav-link {
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+        }
+
+            .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: #fff;
+            }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-row {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background-color: #F9F9FB;
+        }
+
+        .kpi-card-grid {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .kpi-card {
+            flex: 1 1 200px;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+    </style>
+
     <div class="page">
         <div class="sidebar">
             <NavMenu />
         </div>
 
         <main>
-            <div class="top-row px-4">
-                <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <div class="top-row d-flex align-items-center justify-content-center">
+                <h3 class="mb-0">📊 Manufacturing Insights Dashboard</h3>
             </div>
 
-            <article class="content px-4">
+            <article class="content">
                 @Body
             </article>
         </main>

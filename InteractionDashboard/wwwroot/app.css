@@ -1,6 +1,18 @@
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', sans-serif, Arial, Helvetica;
+    background-color: #F9F9FB;
+    margin: 0;
 }
+
+h6 {
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.fs-4 {
+    color: #2E4053;
+}
+
 
 a, .btn-link {
     color: #006bb7;

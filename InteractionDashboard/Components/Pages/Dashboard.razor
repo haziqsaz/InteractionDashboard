@@ -1,0 +1,241 @@
+﻿@page "/dashboard"
+@using TVInteractionDashboard.Data
+@inject TVInteractionContext _context
+@using Telerik.Blazor.Components
+@using Microsoft.EntityFrameworkCore
+
+<h3 class="mb-4">📊 Manufacturing Insights Dashboard</h3>
+
+
+<h5 class="mb-3">Filter by Time Range</h5>
+<div class="d-flex flex-wrap gap-2 align-items-center mb-4">
+    <TelerikDropDownList Data="@presetOptions"
+                         TextField="Label"
+                         ValueField="Value"
+                         @bind-Value="selectedPreset"
+                         Width="200px"
+                         OnChange="@OnPresetChanged" />
+
+    @if (selectedPreset == "custom")
+    {
+        <TelerikDateTimePicker @bind-Value="customStart" Width="220px" />
+        <TelerikDateTimePicker @bind-Value="customEnd" Width="220px" />
+    }
+
+    <TelerikButton OnClick="@LoadChartsAsync" ThemeColor="Primary">Apply Filter</TelerikButton>
+</div>
+
+<!-- KPI Cards -->
+<div class="kpi-card-grid mb-5">
+    <div class="kpi-card">
+        <h6>Total Interactions</h6>
+        <p class="fs-4 fw-bold">@totalInteractions</p>
+    </div>
+    <div class="kpi-card">
+        <h6>Average Duration (s)</h6>
+        <p class="fs-4 fw-bold">@avgDuration.ToString("0.0")</p>
+    </div>
+</div>
+
+
+<!-- Line Chart: Interactions Per Day -->
+<div class="chart-container mb-5">
+    <TelerikChart>
+        <ChartSeriesItems>
+            <ChartSeries Type="ChartSeriesType.Line"
+                         Name="Interactions"
+                         Data="@interactionsPerDay"
+                         Field="Value"
+                         CategoryField="Label" />
+        </ChartSeriesItems>
+        <ChartCategoryAxes>
+            <ChartCategoryAxis>
+                <ChartCategoryAxisLabels>
+                    <ChartCategoryAxisLabelsRotation Angle="45" />
+                </ChartCategoryAxisLabels>
+            </ChartCategoryAxis>
+        </ChartCategoryAxes>
+        <ChartTitle Text="Interactions Per Day" />
+    </TelerikChart>
+</div>
+
+<!-- Chart: Average Viewing Duration Per Day -->
+<div class="chart-container mb-5">
+    <TelerikChart>
+        <ChartSeriesItems>
+            <ChartSeries Type="ChartSeriesType.Line"
+                         Name="Avg Duration"
+                         Data="@avgDurationPerDay"
+                         Field="Value"
+                         CategoryField="Label" />
+        </ChartSeriesItems>
+        <ChartCategoryAxes>
+            <ChartCategoryAxis>
+                <ChartCategoryAxisLabels>
+                    <ChartCategoryAxisLabelsRotation Angle="45" />
+                </ChartCategoryAxisLabels>
+            </ChartCategoryAxis>
+        </ChartCategoryAxes>
+        <ChartTitle Text="Average Viewing Duration Per Day (seconds)" />
+    </TelerikChart>
+</div>
+
+<!-- Chart: Interactions by TV Unit -->
+<div class="chart-container mb-5">
+    <TelerikChart>
+        <ChartSeriesItems>
+            <ChartSeries Type="ChartSeriesType.Bar"
+                         Name="TV Units"
+                         Data="@interactionsByUnit"
+                         Field="Value"
+                         CategoryField="Label" />
+        </ChartSeriesItems>
+        <ChartTitle Text="Interactions by TV Unit" />
+    </TelerikChart>
+</div>
+
+<!-- Chart: Combined Interactions + Avg Duration -->
+<div class="chart-container mb-5">
+    <TelerikChart>
+        <ChartSeriesItems>
+            <ChartSeries Type="ChartSeriesType.Column"
+                         Name="Interactions"
+                         Data="@comboData"
+                         Field="Interactions"
+                         CategoryField="Label" />
+            <ChartSeries Type="ChartSeriesType.Line"
+                         Name="Avg Duration"
+                         Data="@comboData"
+                         Field="AvgDuration"
+                         CategoryField="Label" />
+        </ChartSeriesItems>
+        <ChartTitle Text="Combined View: Interactions + Avg Duration" />
+    </TelerikChart>
+</div>
+
+@code {
+    // KPI values
+    private int totalInteractions;
+    private double avgDuration;
+
+    // Chart data models
+    public class ChartPoint
+    {
+        public string Label { get; set; }
+        public double Value { get; set; }
+    }
+
+    public class ComboChartPoint
+    {
+        public string Label { get; set; }
+        public double Interactions { get; set; }
+        public double AvgDuration { get; set; }
+    }
+
+    private List<ChartPoint> interactionsPerDay = new();
+    private List<ChartPoint> avgDurationPerDay = new();
+    private List<ChartPoint> interactionsByUnit = new();
+    private List<ComboChartPoint> comboData = new();
+
+    // Dropdown + datetime filter
+    private string selectedPreset = "1h";
+    private DateTime? customStart = DateTime.Now.AddHours(-1);
+    private DateTime? customEnd = DateTime.Now;
+
+    private DateTime? filterStart => selectedPreset == "custom" ? customStart : CalculatePresetStart();
+    private DateTime? filterEnd => selectedPreset == "custom" ? customEnd : DateTime.Now;
+
+    private List<PresetOption> presetOptions = new()
+    {
+        new() { Label = "Last 1 Hour", Value = "1h" },
+        new() { Label = "Last 3 Hours", Value = "3h" },
+        new() { Label = "Last 6 Hours", Value = "6h" },
+        new() { Label = "Last 12 Hours", Value = "12h" },
+        new() { Label = "Last 24 Hours", Value = "24h" },
+        new() { Label = "Custom Range", Value = "custom" }
+    };
+
+    public class PresetOption
+    {
+        public string Label { get; set; }
+        public string Value { get; set; }
+    }
+
+    private Task OnPresetChanged(object value)
+    {
+        selectedPreset = value?.ToString();
+        return Task.CompletedTask;
+    }
+
+    private DateTime? CalculatePresetStart()
+    {
+        return selectedPreset switch
+        {
+            "1h" => DateTime.Now.AddHours(-1),
+            "3h" => DateTime.Now.AddHours(-3),
+            "6h" => DateTime.Now.AddHours(-6),
+            "12h" => DateTime.Now.AddHours(-12),
+            "24h" => DateTime.Now.AddHours(-24),
+            _ => null
+        };
+    }
+
+    private async Task LoadChartsAsync()
+    {
+        var query = _context.TV_Interactions.AsQueryable();
+
+        if (filterStart.HasValue)
+            query = query.Where(i => i.StartTime >= filterStart.Value);
+        if (filterEnd.HasValue)
+            query = query.Where(i => i.StartTime <= filterEnd.Value);
+
+        // KPIs
+        totalInteractions = await query.CountAsync();
+        avgDuration = await query.AverageAsync(i => (double?)i.Duration) ?? 0;
+
+        // Interactions per day
+        interactionsPerDay = await query
+            .GroupBy(i => i.StartTime.Date)
+            .Select(g => new ChartPoint
+            {
+                Label = g.Key.ToString("MM/dd"),
+                Value = g.Count()
+            }).ToListAsync();
+
+        // Avg duration per day
+        avgDurationPerDay = await query
+            .GroupBy(i => i.StartTime.Date)
+            .Select(g => new ChartPoint
+            {
+                Label = g.Key.ToString("MM/dd"),
+                Value = g.Average(x => (double)x.Duration)
+            }).ToListAsync();
+
+        // Interactions by TV unit
+        interactionsByUnit = await (
+            from i in query
+            join u in _context.TV_Units on i.UnitID equals u.UnitID
+            group i by u.TvPosition into g
+            select new ChartPoint
+            {
+                Label = g.Key,
+                Value = g.Count()
+            }).ToListAsync();
+
+        // Combined view
+        comboData = await query
+            .GroupBy(i => i.StartTime.Date)
+            .Select(g => new ComboChartPoint
+            {
+                Label = g.Key.ToString("MM/dd"),
+                Interactions = g.Count(),
+                AvgDuration = g.Average(x => (double)x.Duration)
+            }).ToListAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadChartsAsync();
+    }
+}
+
