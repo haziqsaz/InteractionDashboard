@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36212.18 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractionDashboard", "InteractionDashboard\InteractionDashboard.csproj", "{1F73DD7B-9238-4201-8808-C9383FFB4CEF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F73DD7B-9238-4201-8808-C9383FFB4CEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F73DD7B-9238-4201-8808-C9383FFB4CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F73DD7B-9238-4201-8808-C9383FFB4CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F73DD7B-9238-4201-8808-C9383FFB4CEF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F9BDBA5E-DF43-4DCF-9A0D-0BE7B70B1763}
+	EndGlobalSection
+EndGlobal
