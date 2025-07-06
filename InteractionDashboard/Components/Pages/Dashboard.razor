@@ -8,7 +8,7 @@
 <h3 class="mb-4">📈 Analytics</h3>
 
 <!-- FILTERS -->
-<h5 class="mb-3">Filter by Time Range</h5>
+<h5 class="mb-3">Time Range</h5>
 <div class="d-flex flex-wrap gap-2 align-items-center mb-4">
     <TelerikDropDownList Data="@presetOptions"
                          TextField="Label"
@@ -26,7 +26,7 @@
     <TelerikButton OnClick="@LoadChartsAsync" ThemeColor="Primary">Apply Filter</TelerikButton>
 </div>
 
-<!-- KPI CARDS -->
+<!-- CARDS -->
 <div class="kpi-card-grid mb-5">
     <div class="kpi-card">
         <h6>Total Interactions</h6>
@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<!-- INTERACTIONS PER DAY -->
+<!-- Line chart: INTERACTIONS PER DAY -->
 <div class="chart-container mb-5">
     <TelerikChart>
         <ChartSeriesItems>
@@ -52,11 +52,18 @@
         </ChartSeriesItems>
         <ChartCategoryAxes>
             <ChartCategoryAxis>
+                <ChartCategoryAxisTitle Text="Date" />
                 <ChartCategoryAxisLabels>
                     <ChartCategoryAxisLabelsRotation Angle="45" />
                 </ChartCategoryAxisLabels>
             </ChartCategoryAxis>
         </ChartCategoryAxes>
+        <ChartValueAxes>
+            <ChartValueAxis>
+                <ChartValueAxisTitle Text="Interactions" />
+            </ChartValueAxis>
+        </ChartValueAxes>
+
         <ChartTitle Text="Interactions Per Day" />
         <ChartZoomable Enabled="true">
             <ChartZoomableMousewheel Enabled="true" Rate="0.4" />
@@ -71,7 +78,7 @@
     </TelerikChart>
 </div>
 
-<!-- AVG DURATION PER DAY -->
+<!-- Line chart: AVG DURATION PER DAY -->
 <div class="chart-container mb-5">
     <TelerikChart>
         <ChartSeriesItems>
@@ -85,11 +92,18 @@
         </ChartSeriesItems>
         <ChartCategoryAxes>
             <ChartCategoryAxis>
+                <ChartCategoryAxisTitle Text="Date" />
                 <ChartCategoryAxisLabels>
                     <ChartCategoryAxisLabelsRotation Angle="45" />
                 </ChartCategoryAxisLabels>
             </ChartCategoryAxis>
         </ChartCategoryAxes>
+        <ChartValueAxes>
+            <ChartValueAxis>
+                <ChartValueAxisTitle Text="Average Duration (s)" />
+            </ChartValueAxis>
+        </ChartValueAxes>
+
         <ChartTitle Text="Average Viewing Duration Per Day (seconds)" />
         <ChartZoomable Enabled="true">
             <ChartZoomableMousewheel Enabled="true" Rate="0.4" />
@@ -104,7 +118,7 @@
     </TelerikChart>
 </div>
 
-<!-- Chart: Interactions by TV Unit with Colors -->
+<!-- Bar chart: Interactions by TV Unit -->
 <div class="chart-container mb-5">
     <TelerikChart>
         <ChartSeriesItems>
@@ -127,6 +141,16 @@
                          CategoryField="Label"
                          Color="#76b7b2" />
         </ChartSeriesItems>
+        <ChartCategoryAxes>
+            <ChartCategoryAxis>
+                <ChartCategoryAxisTitle Text="TV Position" />
+            </ChartCategoryAxis>
+        </ChartCategoryAxes>
+        <ChartValueAxes>
+            <ChartValueAxis>
+                <ChartValueAxisTitle Text="Interactions" />
+            </ChartValueAxis>
+        </ChartValueAxes>
 
         <ChartTitle Text="Interactions by TV Unit" />
         <ChartLegend Position="ChartLegendPosition.Top" />
