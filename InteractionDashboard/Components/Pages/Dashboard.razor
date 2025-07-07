@@ -4,6 +4,11 @@
 @using Telerik.Blazor.Components
 @using Microsoft.EntityFrameworkCore
 @using System.Globalization
+@using PdfExportJS.Services
+@using TVInteractionDashboard.Components
+
+@inject DrawingService DrawingService
+
 
 <h3 class="mb-4">📈 Analytics</h3>
 
@@ -43,9 +48,19 @@
     </div>
 </div>
 
+@* <div class="export-menu">
+    <button class="menu-btn" @onclick="ToggleMenu">⋮</button>
+    @if (showMenu)
+    {
+        <div class="menu-options">
+            <button @onclick="ExportAsJPG">Export as JPG</button>
+        </div>
+    }
+</div> *@
 
 <!-- Line chart: INTERACTIONS PER DAY -->
-<div class="chart-container mb-5">
+<div class="chart-container mb-5" style="position: relative;" @ref="@chart1Ref">
+    <ChartExportMenu TargetElement="@chart1Ref" />
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Line"
@@ -86,7 +101,8 @@
 </div>
 
 <!-- Line chart: AVG DURATION PER DAY -->
-<div class="chart-container mb-5">
+<div class="chart-container mb-5" style="position: relative;" @ref="@chart2Ref">
+    <ChartExportMenu TargetElement="@chart2Ref"/>
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Line"
@@ -126,7 +142,8 @@
 </div>
 
 <!-- Bar chart: Interactions by TV Unit -->
-<div class="chart-container mb-5">
+<div class="chart-container mb-5" style="position: relative;" @ref="@chart3Ref">
+    <ChartExportMenu TargetElement="@chart3Ref"/>
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Column"
@@ -172,7 +189,8 @@
 
 
 <!-- COMBO CHART -->
-<div class="chart-container mb-5">
+<div class="chart-container mb-5" style="position: relative;" @ref="@comboChartRef">
+    <ChartExportMenu TargetElement="@comboChartRef"/>
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Column"
@@ -213,7 +231,8 @@
 </div>
 
 <!-- HEATMAP -->
-<div class="chart-container mb-5">
+<div class="chart-container mb-5" style="position: relative;" @ref="@heatmapRef">
+    <ChartExportMenu TargetElement="@heatmapRef"/>
     <TelerikChart Width="100%" Height="400px">
         <ChartTitle Text="Peak Viewing Hours by Day" />
         <ChartLegend Position="@ChartLegendPosition.Bottom" />
@@ -264,6 +283,11 @@
 @code {
     private int totalInteractions;
     private double avgDuration;
+    private ElementReference chart1Ref;
+    private ElementReference chart2Ref;
+    private ElementReference chart3Ref;
+    private ElementReference comboChartRef;
+    private ElementReference heatmapRef;
 
     public class ChartPoint { public string Label { get; set; } public double Value { get; set; } }
     public class ComboChartPoint { public string Label { get; set; } public double Interactions { get; set; } public double AvgDuration { get; set; } }
@@ -398,7 +422,6 @@
         else
             return "value-high";
     }
-
 
     protected override async Task OnInitializedAsync()
     {

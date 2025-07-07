@@ -9,6 +9,8 @@
   <ItemGroup>
     <Content Remove="Components\Pages\Counter.razor" />
     <Content Remove="Components\Pages\Weather.razor" />
+    <Content Remove="wwwroot\chart-export.js" />
+    <Content Remove="wwwroot\telerikClientExporter.js" />
   </ItemGroup>
 
   <ItemGroup>

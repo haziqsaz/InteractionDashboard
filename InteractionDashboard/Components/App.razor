@@ -11,12 +11,30 @@
     <link rel="icon" type="image/png" href="WDIcon.png" />
     <link rel="stylesheet" href="_content/Telerik.UI.for.Blazor/css/kendo-theme-default/all.css" />
     <script src="_content/Telerik.UI.for.Blazor/js/telerik-blazor.js"></script>
+    
+    @* <link rel="stylesheet" href="PdfExportJS.styles.css" /> *@
+
     <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 
 <body>
     <Routes @rendermode="InteractiveServer" />
-    <script src="_framework/blazor.web.js"></script>
+    <script src="_framework/blazor.web.js" autostart="false"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Blazor.start();
+        });
+    </script>
+
+    <!-- These libraries are delivered through LibMan in the project -->
+    <script src="lib/progress/kendo-file-saver/dist/cdn/js/kendo-file-saver.js"></script>
+    <script src="lib/progress/kendo-drawing/dist/cdn/js/kendo-drawing.js"></script>
+    <script src="lib/pako/dist/pako.js"></script>
+
+    <!-- telerikInterop.js exposes the Kendo API to Blazor -->
+    <script src="telerikInterop.js"></script>
+
 </body>
 
 </html>

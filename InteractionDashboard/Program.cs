@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TVInteractionDashboard.Components;
 using Microsoft.AspNetCore.Components.Web;
+//using PdfExportJS.Components;
+using PdfExportJS.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,10 @@ builder.Services.AddRazorComponents()
 builder.Services.AddTelerikBlazor();
 builder.Services.AddDbContext<TVInteractionContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// This drawing service calls the JavaScript logic
+builder.Services.AddTransient<DrawingService>();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 
 var app = builder.Build();
