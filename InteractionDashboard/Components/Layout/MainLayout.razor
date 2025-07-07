@@ -48,22 +48,43 @@
 
         .kpi-card-grid {
             display: flex;
-            gap: 1.5rem;
+            gap: 2.0rem;
+            justify-content: center;
             flex-wrap: wrap;
+            margin-top: 1rem;
         }
 
         .kpi-card {
-            flex: 1 1 200px;
-            padding: 1.5rem;
+            flex: 0 1 190px; /* smaller base width */
+            padding: 1rem 1.25rem;
             background: white;
             border-radius: 0.75rem;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            text-align: center;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            .kpi-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .value-low {
+            color: #e74c3c; /* red */
+        }
+
+        .value-medium {
+            color: #f1c40f; /* yellow */
+        }
+
+        .value-high {
+            color: #2ecc71; /* green */
         }
 
         .chart-container {

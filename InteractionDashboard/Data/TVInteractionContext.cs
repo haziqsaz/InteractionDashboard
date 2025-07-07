@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TVInteractionDashboard.Data;
-//using TVInteractionDashboard.Models;
 
 public class TVInteractionContext : DbContext
 {

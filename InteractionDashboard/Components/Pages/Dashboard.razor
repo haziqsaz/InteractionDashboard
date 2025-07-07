@@ -1,4 +1,4 @@
-﻿@page "/dashboard"
+﻿@page "/"
 @using TVInteractionDashboard.Data
 @inject TVInteractionContext _context
 @using Telerik.Blazor.Components
@@ -30,13 +30,19 @@
 <div class="kpi-card-grid mb-5">
     <div class="kpi-card">
         <h6>Total Interactions</h6>
-        <p class="fs-4 fw-bold">@totalInteractions</p>
+        <p class="kpi-value @GetColorClass(totalInteractions, 15, 30)">
+            @totalInteractions
+        </p>
     </div>
+
     <div class="kpi-card">
         <h6>Average Duration (s)</h6>
-        <p class="fs-4 fw-bold">@avgDuration.ToString("0.0")</p>
+        <p class="kpi-value @GetColorClass(avgDuration, 50, 100)">
+            @avgDuration.ToString("0.0")
+        </p>
     </div>
 </div>
+
 
 <!-- Line chart: INTERACTIONS PER DAY -->
 <div class="chart-container mb-5">
@@ -46,7 +52,8 @@
                          Name="Interactions"
                          Data="@interactionsPerDay"
                          Field="Value"
-                         CategoryField="Label">
+                         CategoryField="Label"
+                         Color="#4e79a7">
                 <ChartSeriesTooltip Visible="true" />
             </ChartSeries>
         </ChartSeriesItems>
@@ -83,7 +90,7 @@
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Line"
-                         Name="Avg Duration"
+                         Name="Average Duration"
                          Data="@avgDurationPerDay"
                          Field="Value"
                          CategoryField="Label">
@@ -175,7 +182,7 @@
                          CategoryField="Label"
                          Color="#4e79a7" />
             <ChartSeries Type="ChartSeriesType.Column"
-                         Name="Avg Duration (s)"
+                         Name="Average Duration (s)"
                          Data="@comboData"
                          Field="AvgDuration"
                          CategoryField="Label"
@@ -381,6 +388,17 @@
 
         heatmapData = grouped.ToList();
     }
+
+    private string GetColorClass(double value, double lowThreshold, double highThreshold)
+    {
+        if (value < lowThreshold)
+            return "value-low";
+        else if (value < highThreshold)
+            return "value-medium";
+        else
+            return "value-high";
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
