@@ -6,12 +6,13 @@
 @using PdfExportJS.Services
 @inject DrawingService DrawingService
 
-<div class="export-menu">
-    <button class="menu-btn" @onclick="ToggleMenu">⋮</button>
+<div class="export-wrapper">
+    <button class="menu-icon" @onclick="ToggleMenu">⋮</button>
     @if (showMenu)
     {
-        <div class="menu-options">
-            <button @onclick="ExportAsJPG">Export as JPG</button>
+        <div class="export-dropdown">
+            <button class="dropdown-item" @onclick="ExportAsJPG">📸 Export as JPG</button>
+            <button class="dropdown-item" @onclick="ExportAsPNG">🖼️ Export as PNG</button>
         </div>
     }
 </div>
@@ -26,6 +27,13 @@
     {
         showMenu = false;
         var data = await DrawingService.ExportImage(TargetElement);
-        await DrawingService.SaveAs(data, $"chart-export-{DateTime.Now.Ticks}.jpg");
+        await DrawingService.SaveAs(data, $"chart-{DateTime.Now}.jpg");
+    }
+
+    private async Task ExportAsPNG()
+    {
+        showMenu = false;
+        var data = await DrawingService.ExportImage(TargetElement);
+        await DrawingService.SaveAs(data, $"chart-{DateTime.Now}.png");
     }
 }

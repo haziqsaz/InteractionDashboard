@@ -59,8 +59,11 @@
 </div> *@
 
 <!-- Line chart: INTERACTIONS PER DAY -->
-<div class="chart-container mb-5" style="position: relative;" @ref="@chart1Ref">
+<div class="d-flex justify-content-end mb-2">
     <ChartExportMenu TargetElement="@chart1Ref" />
+</div>
+
+<div class="chart-container mb-5" style="position: relative;" @ref="@chart1Ref">
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Line"
@@ -101,8 +104,10 @@
 </div>
 
 <!-- Line chart: AVG DURATION PER DAY -->
+<div class="d-flex justify-content-end mb-2">
+    <ChartExportMenu TargetElement="@chart2Ref" />
+</div>
 <div class="chart-container mb-5" style="position: relative;" @ref="@chart2Ref">
-    <ChartExportMenu TargetElement="@chart2Ref"/>
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Line"
@@ -142,8 +147,10 @@
 </div>
 
 <!-- Bar chart: Interactions by TV Unit -->
+<div class="d-flex justify-content-end mb-2">
+    <ChartExportMenu TargetElement="@chart3Ref" />
+</div>
 <div class="chart-container mb-5" style="position: relative;" @ref="@chart3Ref">
-    <ChartExportMenu TargetElement="@chart3Ref"/>
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Column"
@@ -189,8 +196,10 @@
 
 
 <!-- COMBO CHART -->
+<div class="d-flex justify-content-end mb-2">
+    <ChartExportMenu TargetElement="@comboChartRef" />
+</div>
 <div class="chart-container mb-5" style="position: relative;" @ref="@comboChartRef">
-    <ChartExportMenu TargetElement="@comboChartRef"/>
     <TelerikChart>
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Column"
@@ -231,8 +240,10 @@
 </div>
 
 <!-- HEATMAP -->
+<div class="d-flex justify-content-end mb-2">
+    <ChartExportMenu TargetElement="@heatmapRef" />
+</div>
 <div class="chart-container mb-5" style="position: relative;" @ref="@heatmapRef">
-    <ChartExportMenu TargetElement="@heatmapRef"/>
     <TelerikChart Width="100%" Height="400px">
         <ChartTitle Text="Peak Viewing Hours by Day" />
         <ChartLegend Position="@ChartLegendPosition.Bottom" />
