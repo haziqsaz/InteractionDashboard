@@ -1,0 +1,84 @@
+﻿@page "/logs"
+@using TVInteractionDashboard.Data
+@inject TVInteractionContext _context
+@using Telerik.Blazor.Components
+@using Microsoft.EntityFrameworkCore
+@using TVInteractionDashboard.Components
+
+<h3 class="mb-4">📝 Full Interaction Logs</h3>
+
+<TelerikGrid Data="@interactionLogs"
+             Pageable="true"
+             Sortable="true"
+             FilterMode="@GridFilterMode.FilterRow"
+             Height="600px"
+             Resizable="true">
+
+    <GridToolBar>
+        <GridToolBarCsvExportTool>
+            Export to CSV
+        </GridToolBarCsvExportTool>
+        <GridToolBarExcelExportTool>
+            Export to Excel
+        </GridToolBarExcelExportTool>
+        <GridToolBarPdfExportTool>
+            Export to PDF
+        </GridToolBarPdfExportTool>
+    </GridToolBar>
+    <GridExport>
+        <GridCsvExport FileName="telerik-grid-export" />
+        <GridExcelExport FileName="telerik-grid-export" />
+        <GridPdfExport FileName="telerik-grid-export" />
+    </GridExport>
+
+    <GridColumns>
+        <GridColumn Field="Plant" Title="Plant" />
+        <GridColumn Field="Location" Title="Location" />
+        <GridColumn Field="TvPosition" Title="TV Position" />
+        <GridColumn Field="StartTime" Title="Start Time" DisplayFormat="{0:yyyy-MM-dd HH:mm:ss}" />
+        <GridColumn Field="EndTime" Title="End Time" DisplayFormat="{0:yyyy-MM-dd HH:mm:ss}" />
+        <GridColumn Field="Duration" Title="Duration (s)" />
+        <GridColumn Field="CreatedBy" Title="Created By" />
+        <GridColumn Field="CreatedDT" Title="Created At" DisplayFormat="{0:yyyy-MM-dd HH:mm}" />
+    </GridColumns>
+</TelerikGrid>
+
+
+@code {
+    public class InteractionDisplay
+    {
+        public string Plant { get; set; }
+        public string Location { get; set; }
+        public string TvPosition { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public int Duration { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime CreatedDT { get; set; }
+    }
+
+    private List<InteractionDisplay> interactionLogs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        interactionLogs = await (
+            from interaction in _context.TV_Interactions
+            join unit in _context.TV_Units on interaction.UnitID equals unit.UnitID
+            join location in _context.TV_Locations on unit.LocationID equals location.LocationID
+            join plant in _context.TV_Plants on location.PlantID equals plant.PlantID
+            orderby interaction.StartTime descending
+            select new InteractionDisplay
+            {
+                Plant = plant.Plant, // e.g., "PN1"
+                Location = location.Location, // e.g., "GF"
+                TvPosition = unit.TvPosition, // e.g., "Left"
+                StartTime = interaction.StartTime,
+                EndTime = interaction.EndTime,
+                Duration = interaction.Duration,
+                CreatedBy = interaction.CreatedBy,
+                CreatedDT = interaction.CreatedDT
+            }).ToListAsync();
+    }
+
+}
+
