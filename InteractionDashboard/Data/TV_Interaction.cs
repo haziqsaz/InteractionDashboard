@@ -14,5 +14,6 @@ namespace TVInteractionDashboard.Data
         public int Duration { get; set; }
         public string CreatedBy { get; set; }
         public DateTime CreatedDT { get; set; }
+        public TV_Unit Unit { get; set; }
     }
 }

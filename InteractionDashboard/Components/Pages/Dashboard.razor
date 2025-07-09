@@ -12,24 +12,52 @@
 
 <h3 class="mb-4">📈 Analytics</h3>
 
-<!-- FILTERS -->
-<h5 class="mb-3">Time Range</h5>
-<div class="d-flex flex-wrap gap-2 align-items-center mb-4">
+<h5 class="mb-3">Filters</h5>
+<div class="d-flex flex-wrap gap-3 align-items-end mb-4">
+
+    <TelerikDropDownList Data="@plants"
+                         TextField="Plant"
+                         ValueField="PlantID"
+                         Value="@selectedPlantId"
+                         ValueChanged="@((int? val) => OnPlantChanged(val))"
+                         Width="80px" >
+        <DropDownListSettings>
+            <DropDownListPopupSettings Height="auto" />
+        </DropDownListSettings>
+    </TelerikDropDownList>
+
+
+    <TelerikDropDownList Data="@locations"
+                         TextField="Location"
+                         ValueField="LocationID"
+                         @bind-Value="selectedLocationId"
+                         Width="168px"
+                         Enabled="@selectedPlantId.HasValue" >
+        <DropDownListSettings>
+            <DropDownListPopupSettings Height="auto" />
+        </DropDownListSettings>
+    </TelerikDropDownList>
+
     <TelerikDropDownList Data="@presetOptions"
                          TextField="Label"
                          ValueField="Value"
                          @bind-Value="selectedPreset"
-                         Width="200px"
-                         OnChange="@OnPresetChanged" />
+                         Width="150px"
+                         OnChange="@OnPresetChanged" >
+        <DropDownListSettings>
+            <DropDownListPopupSettings Height="auto" />
+        </DropDownListSettings>
+    </TelerikDropDownList>
 
     @if (selectedPreset == "custom")
     {
-        <TelerikDateTimePicker @bind-Value="customStart" Width="220px" />
-        <TelerikDateTimePicker @bind-Value="customEnd" Width="220px" />
+        <TelerikDateTimePicker @bind-Value="customStart" Width="200px" />
+        <TelerikDateTimePicker @bind-Value="customEnd" Width="200px" />
     }
 
-    <TelerikButton OnClick="@LoadChartsAsync" ThemeColor="Primary">Apply Filter</TelerikButton>
+    <TelerikButton OnClick="@LoadChartsAsync" ThemeColor="Primary">Apply</TelerikButton>
 </div>
+
 
 <!-- CARDS -->
 <div class="kpi-card-grid mb-5">
@@ -41,22 +69,12 @@
     </div>
 
     <div class="kpi-card">
-        <h6>Average Duration (s)</h6>
-        <p class="kpi-value @GetColorClass(avgDuration, 50, 100)">
-            @avgDuration.ToString("0.0")
+        <h6>Average Duration Per Interaction (minutes)</h6>
+        <p class="kpi-value @GetColorClass(avgDuration / 60, 1, 3)">
+            @((avgDuration / 60).ToString("0.00"))
         </p>
     </div>
 </div>
-
-@* <div class="export-menu">
-    <button class="menu-btn" @onclick="ToggleMenu">⋮</button>
-    @if (showMenu)
-    {
-        <div class="menu-options">
-            <button @onclick="ExportAsJPG">Export as JPG</button>
-        </div>
-    }
-</div> *@
 
 <!-- Line chart: INTERACTIONS PER DAY -->
 <div class="d-flex justify-content-end mb-2">
@@ -71,7 +89,7 @@
                          Data="@interactionsPerDay"
                          Field="Value"
                          CategoryField="Label"
-                         Color="#4e79a7">
+                         Color="#0D66FF">
                 <ChartSeriesTooltip Visible="true" />
             </ChartSeries>
         </ChartSeriesItems>
@@ -84,8 +102,9 @@
             </ChartCategoryAxis>
         </ChartCategoryAxes>
         <ChartValueAxes>
-            <ChartValueAxis>
+            <ChartValueAxis MajorUnit="1">
                 <ChartValueAxisTitle Text="Interactions" />
+                <ChartValueAxisLabels Format="{0}" />
             </ChartValueAxis>
         </ChartValueAxes>
 
@@ -114,7 +133,8 @@
                          Name="Average Duration"
                          Data="@avgDurationPerDay"
                          Field="Value"
-                         CategoryField="Label">
+                         CategoryField="Label"
+                         Color="#7C40FF" >
                 <ChartSeriesTooltip Visible="true" />
             </ChartSeries>
         </ChartSeriesItems>
@@ -155,6 +175,7 @@
         <ChartSeriesItems>
             <ChartSeries Type="ChartSeriesType.Column"
                          Name="Left"
+                         
                          Data="@interactionsByUnit.Where(x => x.Label == "Left")"
                          Field="Value"
                          CategoryField="Label"
@@ -183,7 +204,7 @@
             </ChartValueAxis>
         </ChartValueAxes>
 
-        <ChartTitle Text="Interactions by TV Unit" />
+        <ChartTitle Text="Interaction Count by TV Unit" />
         <ChartLegend Position="ChartLegendPosition.Top" />
         <ChartTooltip Visible="true" />
         <ChartSettings>
@@ -200,44 +221,49 @@
     <ChartExportMenu TargetElement="@comboChartRef" />
 </div>
 <div class="chart-container mb-5" style="position: relative;" @ref="@comboChartRef">
-    <TelerikChart>
-        <ChartSeriesItems>
-            <ChartSeries Type="ChartSeriesType.Column"
-                         Name="Interactions"
-                         Data="@comboData"
-                         Field="Interactions"
-                         CategoryField="Label"
-                         Color="#4e79a7" />
-            <ChartSeries Type="ChartSeriesType.Column"
-                         Name="Average Duration (s)"
-                         Data="@comboData"
-                         Field="AvgDuration"
-                         CategoryField="Label"
-                         Color="#f28e2b" />
-        </ChartSeriesItems>
-        <ChartCategoryAxes>
-            <ChartCategoryAxis Categories="@comboData.Select(x => x.Label).ToArray()">
-                <ChartCategoryAxisTitle Text="Date" />
+<TelerikChart>
+    <ChartSeriesItems>
+        <ChartSeries Type="ChartSeriesType.Column"
+                     Name="Average Duration"
+                     Data="@comboData"
+                     Field="AvgDuration"
+                     CategoryField="Label"
+                         Color="#287BBF" />
+            
+        <ChartSeries Type="ChartSeriesType.Line"
+                     Name="Interactions"
+                     Data="@comboData"
+                     Field="Interactions"
+                     CategoryField="Label"
+                         Color="#FC1919"
+                     Axis="interactionsAxis" />
+    </ChartSeriesItems>
+
+    <ChartValueAxes>
+            <ChartValueAxis Color="#287BBF">
+            <ChartValueAxisTitle Text="Average Duration (min)" />
+        </ChartValueAxis>
+            <ChartValueAxis Name="interactionsAxis" Color="#FC1919" MajorUnit="1">
+            <ChartValueAxisTitle Text="Interactions" />
+            
+        </ChartValueAxis>
+    </ChartValueAxes>
+
+    <ChartCategoryAxes>
+        <ChartCategoryAxis Categories="@comboData.Select(x => x.Label).ToArray()" AxisCrossingValue="@crossingValues">
+            <ChartCategoryAxisTitle Text="Date" />
                 <ChartCategoryAxisLabels>
                     <ChartCategoryAxisLabelsRotation Angle="45" />
                 </ChartCategoryAxisLabels>
-            </ChartCategoryAxis>
-        </ChartCategoryAxes>
-        <ChartValueAxes>
-            <ChartValueAxis>
-                <ChartValueAxisTitle Text="Value" />
-            </ChartValueAxis>
-        </ChartValueAxes>
-        <ChartLegend Position="ChartLegendPosition.Top" />
-        <ChartTooltip Visible="true" />
-        <ChartTitle Text="Interactions and Average Duration" />
-        <ChartSettings>
-            <NoDataTemplate>
-                <div><span style="font-size: 50px;">🔎</span><p><strong>No data available to display at this time range.</strong></p></div>
-            </NoDataTemplate>
-        </ChartSettings>
-    </TelerikChart>
+        </ChartCategoryAxis>
+    </ChartCategoryAxes>
+
+    <ChartLegend Position="ChartLegendPosition.Top" />
+    <ChartTooltip Visible="true" />
+    <ChartTitle Text="Interactions and The Average Viewing Duration" />
+</TelerikChart>
 </div>
+
 
 <!-- HEATMAP -->
 <div class="d-flex justify-content-end mb-2">
@@ -299,10 +325,16 @@
     private ElementReference chart3Ref;
     private ElementReference comboChartRef;
     private ElementReference heatmapRef;
+    private int? selectedPlantId;
+    private int? selectedLocationId;
+    private List<TV_Plant> plants = new();
+    private List<TV_Location> locations = new();
+
 
     public class ChartPoint { public string Label { get; set; } public double Value { get; set; } }
     public class ComboChartPoint { public string Label { get; set; } public double Interactions { get; set; } public double AvgDuration { get; set; } }
     public class HeatmapData { public int Hour { get; set; } public string Day { get; set; } public int Value { get; set; } public string Color { get; set; } }
+    public object[] crossingValues = new object[] { 0, int.MaxValue };
 
     private List<ChartPoint> interactionsPerDay = new();
     private List<ChartPoint> avgDurationPerDay = new();
@@ -311,19 +343,18 @@
     private List<HeatmapData> heatmapData = new();
     object[] yAxisCategories = new object[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 
-    private string selectedPreset = "1h";
-    private DateTime? customStart = DateTime.Now.AddHours(-1);
+    private string selectedPreset = "24h";
+    private DateTime? customStart = DateTime.Now.AddHours(-24);
     private DateTime? customEnd = DateTime.Now;
     private DateTime? filterStart => selectedPreset == "custom" ? customStart : CalculatePresetStart();
     private DateTime? filterEnd => selectedPreset == "custom" ? customEnd : DateTime.Now;
 
     private List<PresetOption> presetOptions = new()
     {
-        new() { Label = "Last 1 Hour", Value = "1h" },
-        new() { Label = "Last 3 Hours", Value = "3h" },
-        new() { Label = "Last 6 Hours", Value = "6h" },
-        new() { Label = "Last 12 Hours", Value = "12h" },
         new() { Label = "Last 24 Hours", Value = "24h" },
+        new() { Label = "Last 7 Days", Value = "7days" },
+        new() { Label = "Last 14 Days", Value = "14days" },
+        new() { Label = "Last 30 Days", Value = "30days" },
         new() { Label = "Custom Range", Value = "custom" }
     };
 
@@ -337,18 +368,45 @@
 
     private DateTime? CalculatePresetStart() => selectedPreset switch
     {
-        "1h" => DateTime.Now.AddHours(-1),
-        "3h" => DateTime.Now.AddHours(-3),
-        "6h" => DateTime.Now.AddHours(-6),
-        "12h" => DateTime.Now.AddHours(-12),
         "24h" => DateTime.Now.AddHours(-24),
+        "7days" => DateTime.Now.AddHours(-168),
+        "14days" => DateTime.Now.AddHours(-336),
+        "30days" => DateTime.Now.AddHours(-720),
         _ => null
     };
+
+    private async Task OnPlantChanged(int? plantId)
+    {
+  
+        selectedPlantId = plantId;
+
+        if (plantId.HasValue)
+        {
+            locations = await _context.TV_Locations
+                .Where(l => l.PlantID == plantId)
+                .ToListAsync();
+                 selectedLocationId = null;
+        }
+        else
+        {
+            locations = new();
+            selectedLocationId = null;
+        }
+    }
+
 
     private async Task LoadChartsAsync()
     {
 
-        var query = _context.TV_Interactions.AsQueryable();
+        var query = _context.TV_Interactions
+            .Include(i => i.Unit)
+            .ThenInclude(u => u.Location)
+            .AsQueryable();
+
+        if (selectedLocationId.HasValue)
+            query = query.Where(i => i.Unit.LocationID == selectedLocationId.Value);
+        else if (selectedPlantId.HasValue)
+            query = query.Where(i => i.Unit.Location.PlantID == selectedPlantId.Value);
 
         if (filterStart.HasValue)
             query = query.Where(i => i.StartTime >= filterStart.Value);
@@ -381,24 +439,30 @@
             {
                 Label = g.Key.ToString("MM/dd"),
                 Interactions = g.Count(),
-                AvgDuration = g.Average(x => (double)x.Duration)
+                AvgDuration = g.Average(x => (double)x.Duration) / 60 // convert seconds to minutes
             }).ToListAsync();
+
 
         await LoadHeatmapAsync();
 
     }
-
+    
     private string GetHeatColor(int value)
     {
-        if (value <= 2) return "#d9fcd7";
-        else if (value <= 5) return "#99ff94";
-        else if (value <= 10) return "#62fc5b";
-        else return "#1aff0f";
+        if (value <= 2) return "#D9FFD7";
+        else if (value <= 5) return "#78FE70";
+        else if (value <= 10) return "#4AFC40";
+        else return "#0EFB01";
     }
 
     private async Task LoadHeatmapAsync()
     {
         var query = _context.TV_Interactions.AsQueryable();
+
+        if (selectedLocationId.HasValue)
+            query = query.Where(i => i.Unit.LocationID == selectedLocationId.Value);
+        else if (selectedPlantId.HasValue)
+            query = query.Where(i => i.Unit.Location.PlantID == selectedPlantId.Value);
 
         if (filterStart.HasValue)
             query = query.Where(i => i.StartTime >= filterStart.Value);
@@ -436,6 +500,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        plants = await _context.TV_Plants.ToListAsync();
         await LoadChartsAsync();
     }
 }

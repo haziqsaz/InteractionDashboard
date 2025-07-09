@@ -34,9 +34,9 @@ public class TVInteractionContext : DbContext
         // No primary key on TV_Interaction
         modelBuilder.Entity<TV_Interaction>()
             .HasNoKey();
-        // modelBuilder.Entity<TV_Interaction>()
-           // .HasOne(i => i.Unit);
-           // .WithMany(u => u.Interactions)
-          //  .HasForeignKey(i => i.UnitID);
+        modelBuilder.Entity<TV_Interaction>()
+           .HasOne(i => i.Unit)
+            .WithMany()
+            .HasForeignKey(i => i.UnitID);
     }
 }

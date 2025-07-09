@@ -9,27 +9,23 @@
 
 <TelerikGrid Data="@interactionLogs"
              Pageable="true"
+             @bind-PageSize="@PageSize"
+             Height="600px"
              Sortable="true"
              FilterMode="@GridFilterMode.FilterRow"
-             Height="600px"
              Resizable="true">
 
     <GridToolBar>
-        <GridToolBarCsvExportTool>
-            Export to CSV
-        </GridToolBarCsvExportTool>
-        <GridToolBarExcelExportTool>
-            Export to Excel
-        </GridToolBarExcelExportTool>
-        <GridToolBarPdfExportTool>
-            Export to PDF
-        </GridToolBarPdfExportTool>
+        <GridToolBarCsvExportTool>Export to CSV</GridToolBarCsvExportTool>
     </GridToolBar>
+
+    <GridSettings>
+        <GridPagerSettings PageSizes="@PageSizeOptions" />
+    </GridSettings>
+
     <GridExport>
-        <GridCsvExport FileName="telerik-grid-export" />
-        <GridExcelExport FileName="telerik-grid-export" />
-        <GridPdfExport FileName="telerik-grid-export" />
-    </GridExport>
+        <GridCsvExport FileName= "TV-Interaction-Logs" />
+    </GridExport> 
 
     <GridColumns>
         <GridColumn Field="Plant" Title="Plant" />
@@ -42,7 +38,6 @@
         <GridColumn Field="CreatedDT" Title="Created At" DisplayFormat="{0:yyyy-MM-dd HH:mm}" />
     </GridColumns>
 </TelerikGrid>
-
 
 @code {
     public class InteractionDisplay
@@ -58,6 +53,8 @@
     }
 
     private List<InteractionDisplay> interactionLogs = new();
+    private int PageSize { get; set; } = 15;
+    private List<int?> PageSizeOptions { get; set; } = new() { 10, 15, 25, 50, null };
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,9 +66,9 @@
             orderby interaction.StartTime descending
             select new InteractionDisplay
             {
-                Plant = plant.Plant, // e.g., "PN1"
-                Location = location.Location, // e.g., "GF"
-                TvPosition = unit.TvPosition, // e.g., "Left"
+                Plant = plant.Plant,
+                Location = location.Location,
+                TvPosition = unit.TvPosition,
                 StartTime = interaction.StartTime,
                 EndTime = interaction.EndTime,
                 Duration = interaction.Duration,
@@ -79,6 +76,4 @@
                 CreatedDT = interaction.CreatedDT
             }).ToListAsync();
     }
-
 }
-
