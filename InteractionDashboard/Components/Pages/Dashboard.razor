@@ -6,7 +6,6 @@
 @using System.Globalization
 @using PdfExportJS.Services
 @using TVInteractionDashboard.Components
-
 @inject DrawingService DrawingService
 
 
@@ -299,9 +298,10 @@
 
         <ChartXAxes>
             <ChartXAxis>
-                <ChartXAxisTitle Text="Hour of Day" />
-                <ChartXAxisLabels Step="1" />
+                <ChartXAxisTitle Text="Hour of Day (24-hour)" />
+                <ChartXAxisLabels Step="1" Format="HH" />
             </ChartXAxis>
+
         </ChartXAxes>
 
         <ChartYAxes>
@@ -318,6 +318,7 @@
 </div>
 
 @code {
+    private TelerikNotification notificationRef;
     private int totalInteractions;
     private double avgDuration;
     private ElementReference chart1Ref;
@@ -393,6 +394,7 @@
             selectedLocationId = null;
         }
     }
+
 
 
     private async Task LoadChartsAsync()
@@ -501,6 +503,25 @@
     protected override async Task OnInitializedAsync()
     {
         plants = await _context.TV_Plants.ToListAsync();
+
+        // Default plant = PN1
+        var defaultPlant = plants.FirstOrDefault(p => p.Plant == "PN1");
+        if (defaultPlant != null)
+        {
+            selectedPlantId = defaultPlant.PlantID;
+
+            locations = await _context.TV_Locations
+                .Where(l => l.PlantID == selectedPlantId)
+                .ToListAsync();
+
+            // Default location = Ground Floor
+            var defaultLocation = locations.FirstOrDefault(l => l.Location == "Ground Floor");
+            if (defaultLocation != null)
+            {
+                selectedLocationId = defaultLocation.LocationID;
+            }
+        }
+
         await LoadChartsAsync();
     }
 }
