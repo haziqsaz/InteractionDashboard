@@ -31,7 +31,8 @@
                          ValueField="LocationID"
                          @bind-Value="selectedLocationId"
                          Width="168px"
-                         Enabled="@selectedPlantId.HasValue" >
+                         Enabled="@selectedPlantId.HasValue">
+
         <DropDownListSettings>
             <DropDownListPopupSettings Height="auto" />
         </DropDownListSettings>
@@ -318,7 +319,6 @@
 </div>
 
 @code {
-    private TelerikNotification notificationRef;
     private int totalInteractions;
     private double avgDuration;
     private ElementReference chart1Ref;
@@ -378,7 +378,7 @@
 
     private async Task OnPlantChanged(int? plantId)
     {
-  
+
         selectedPlantId = plantId;
 
         if (plantId.HasValue)
@@ -386,7 +386,7 @@
             locations = await _context.TV_Locations
                 .Where(l => l.PlantID == plantId)
                 .ToListAsync();
-                 selectedLocationId = null;
+            selectedLocationId = null;
         }
         else
         {
@@ -448,7 +448,7 @@
         await LoadHeatmapAsync();
 
     }
-    
+
     private string GetHeatColor(int value)
     {
         if (value <= 2) return "#D9FFD7";
@@ -487,7 +487,10 @@
                 };
             });
 
-        heatmapData = grouped.ToList();
+        heatmapData = grouped
+            //.OrderBy(d => d.Day)   // Optional: sort by day first
+            .OrderBy(d => d.Hour)   // Critical: ensure hours are ordered left to right
+            .ToList();
     }
 
     private string GetColorClass(double value, double lowThreshold, double highThreshold)
@@ -504,24 +507,21 @@
     {
         plants = await _context.TV_Plants.ToListAsync();
 
-        // Default plant = PN1
+        // Default: Plant = PN1
         var defaultPlant = plants.FirstOrDefault(p => p.Plant == "PN1");
         if (defaultPlant != null)
         {
             selectedPlantId = defaultPlant.PlantID;
 
-            locations = await _context.TV_Locations
-                .Where(l => l.PlantID == selectedPlantId)
-                .ToListAsync();
+            await OnPlantChanged(selectedPlantId); // Populate locations & clear previous location
 
-            // Default location = Ground Floor
-            var defaultLocation = locations.FirstOrDefault(l => l.Location == "Ground Floor");
+            // Default: Location = Ground Floor Office
+            var defaultLocation = locations.FirstOrDefault(l => l.Location == "Ground Floor Office");
             if (defaultLocation != null)
             {
                 selectedLocationId = defaultLocation.LocationID;
             }
         }
-
         await LoadChartsAsync();
     }
 }
