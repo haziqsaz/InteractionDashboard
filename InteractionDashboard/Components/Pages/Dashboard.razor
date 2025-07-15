@@ -13,7 +13,7 @@
 
 <h5 class="mb-3">Filters</h5>
 <div class="d-flex flex-wrap gap-3 align-items-end mb-4">
-
+    @* Plant filter *@
     <TelerikDropDownList Data="@plants"
                          TextField="Plant"
                          ValueField="PlantID"
@@ -25,7 +25,7 @@
         </DropDownListSettings>
     </TelerikDropDownList>
 
-
+    @* Location filter *@
     <TelerikDropDownList Data="@locations"
                          TextField="Location"
                          ValueField="LocationID"
@@ -38,6 +38,7 @@
         </DropDownListSettings>
     </TelerikDropDownList>
 
+    @* Time filter *@
     <TelerikDropDownList Data="@presetOptions"
                          TextField="Label"
                          ValueField="Value"
@@ -59,7 +60,7 @@
 </div>
 
 
-<!-- CARDS -->
+@* Cards *@
 <div class="kpi-card-grid mb-5">
     <div class="kpi-card">
         <h6>Total Interactions</h6>
@@ -76,7 +77,7 @@
     </div>
 </div>
 
-<!-- Line chart: INTERACTIONS PER DAY -->
+@* Line chart: Interactions per Day *@
 <div class="d-flex justify-content-end mb-2">
     <ChartExportMenu TargetElement="@chart1Ref" />
 </div>
@@ -122,7 +123,7 @@
     </TelerikChart>
 </div>
 
-<!-- Line chart: AVG DURATION PER DAY -->
+@* Line chart: Average viewing duration per day *@
 <div class="d-flex justify-content-end mb-2">
     <ChartExportMenu TargetElement="@chart2Ref" />
 </div>
@@ -166,7 +167,7 @@
     </TelerikChart>
 </div>
 
-<!-- Bar chart: Interactions by TV Unit -->
+@* Bar chart: Interaction count by tv unit *@
 <div class="d-flex justify-content-end mb-2">
     <ChartExportMenu TargetElement="@chart3Ref" />
 </div>
@@ -216,7 +217,7 @@
 </div>
 
 
-<!-- COMBO CHART -->
+@* Bar + Line combo chart: Interactions and average viewing duration *@
 <div class="d-flex justify-content-end mb-2">
     <ChartExportMenu TargetElement="@comboChartRef" />
 </div>
@@ -265,7 +266,7 @@
 </div>
 
 
-<!-- HEATMAP -->
+@* Heatmap *@
 <div class="d-flex justify-content-end mb-2">
     <ChartExportMenu TargetElement="@heatmapRef" />
 </div>
@@ -311,6 +312,8 @@
             </ChartYAxis>
         </ChartYAxes>
         <ChartSettings>
+
+            @* No data template *@
             <NoDataTemplate>
                 <div><span style="font-size: 50px;">🔎</span><p><strong>No data available to display at this time range.</strong></p></div>
             </NoDataTemplate>
@@ -321,13 +324,13 @@
 @code {
     private int totalInteractions;
     private double avgDuration;
-    private ElementReference chart1Ref;
+    private ElementReference chart1Ref; // For charts display
     private ElementReference chart2Ref;
     private ElementReference chart3Ref;
     private ElementReference comboChartRef;
     private ElementReference heatmapRef;
-    private int? selectedPlantId;
-    private int? selectedLocationId;
+    private int? selectedPlantId; // For plant filter
+    private int? selectedLocationId; // For location filter
     private List<TV_Plant> plants = new();
     private List<TV_Location> locations = new();
 
@@ -335,7 +338,7 @@
     public class ChartPoint { public string Label { get; set; } public double Value { get; set; } }
     public class ComboChartPoint { public string Label { get; set; } public double Interactions { get; set; } public double AvgDuration { get; set; } }
     public class HeatmapData { public int Hour { get; set; } public string Day { get; set; } public int Value { get; set; } public string Color { get; set; } }
-    public object[] crossingValues = new object[] { 0, int.MaxValue };
+    public object[] crossingValues = new object[] { 0, int.MaxValue }; // For combo chart
 
     private List<ChartPoint> interactionsPerDay = new();
     private List<ChartPoint> avgDurationPerDay = new();
@@ -344,7 +347,7 @@
     private List<HeatmapData> heatmapData = new();
     object[] yAxisCategories = new object[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 
-    private string selectedPreset = "24h";
+    private string selectedPreset = "24h"; // Default time preset
     private DateTime? customStart = DateTime.Now.AddHours(-24);
     private DateTime? customEnd = DateTime.Now;
     private DateTime? filterStart => selectedPreset == "custom" ? customStart : CalculatePresetStart();
@@ -376,6 +379,7 @@
         _ => null
     };
 
+    // When plant is changed, location will reset and change too (In filter)
     private async Task OnPlantChanged(int? plantId)
     {
 
@@ -395,8 +399,7 @@
         }
     }
 
-
-
+    // Load charts based on filter logic
     private async Task LoadChartsAsync()
     {
 
@@ -415,26 +418,31 @@
         if (filterEnd.HasValue)
             query = query.Where(i => i.StartTime <= filterEnd.Value);
 
+        // Cards
         totalInteractions = await query.CountAsync();
         avgDuration = await query.AverageAsync(i => (double?)i.Duration) ?? 0;
 
+        // Line chart - Interactions per day
         interactionsPerDay = await query
             .GroupBy(i => i.StartTime.Date)
             .Select(g => new ChartPoint { Label = g.Key.ToString("MM/dd"), Value = g.Count() })
             .ToListAsync();
 
+        // Line chart - Avg viewing duration per day
         avgDurationPerDay = await query
             .GroupBy(i => i.StartTime.Date)
             .Select(g => new ChartPoint { Label = g.Key.ToString("MM/dd"), Value = g.Average(x => (double)x.Duration) })
             .ToListAsync();
 
+        // Bar chart - Interaction count per tv unit
         interactionsByUnit = await (
             from i in query
             join u in _context.TV_Units on i.UnitID equals u.UnitID
             group i by u.TvPosition into g
             select new ChartPoint { Label = g.Key, Value = g.Count() })
             .ToListAsync();
-
+            
+        // Bar + Line chart - Avg viewing duration and interactions
         comboData = await query
             .GroupBy(i => i.StartTime.Date)
             .Select(g => new ComboChartPoint
@@ -444,11 +452,12 @@
                 AvgDuration = g.Average(x => (double)x.Duration) / 60 // convert seconds to minutes
             }).ToListAsync();
 
-
+        // Heatmap
         await LoadHeatmapAsync();
 
     }
 
+    // Heatmap colours
     private string GetHeatColor(int value)
     {
         if (value <= 2) return "#D9FFD7";
@@ -456,7 +465,7 @@
         else if (value <= 10) return "#4AFC40";
         else return "#0EFB01";
     }
-
+     // Heatmap logic
     private async Task LoadHeatmapAsync()
     {
         var query = _context.TV_Interactions.AsQueryable();
@@ -488,11 +497,11 @@
             });
 
         heatmapData = grouped
-            //.OrderBy(d => d.Day)   // Optional: sort by day first
-            .OrderBy(d => d.Hour)   // Critical: ensure hours are ordered left to right
+            .OrderBy(d => d.Hour)   // Ensure hours are ordered left to right from start to end of day (Based on DB data)
             .ToList();
     }
 
+    // Card's value colours. The colour value can be changed in MainLayout.razor
     private string GetColorClass(double value, double lowThreshold, double highThreshold)
     {
         if (value < lowThreshold)
@@ -503,6 +512,7 @@
             return "value-high";
     }
 
+    // Main
     protected override async Task OnInitializedAsync()
     {
         plants = await _context.TV_Plants.ToListAsync();
