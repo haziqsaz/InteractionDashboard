@@ -276,6 +276,12 @@
     <ChartTooltip Visible="true" />
     <ChartTitle Text="Interactions and The Average Viewing Duration" />
 
+    <ChartZoomable Enabled="true">
+        <ChartZoomableMousewheel Enabled="true" Rate="0.4" />
+        <ChartZoomableSelection Enabled="true" Key="@ChartZoomableSelectionKey.Ctrl" />
+    </ChartZoomable>
+    <ChartPannable Enabled="true" />
+
     <ChartSettings>
         @* No data template *@
         <NoDataTemplate>
