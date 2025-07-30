@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # appsettings for DB connection
 InteractionDashboard/appsettings.Development.json
+**/appsettings.Development.json
