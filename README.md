@@ -50,8 +50,6 @@ The dashboard displays key metrics and charts based on viewer interaction data s
 ## ⚙️ Setup Instructions
 
 ### 1. Clone the Repository
-
-bash
 git clone https://github.com/your-username/InteractionDashboard.git
 cd InteractionDashboard
 
@@ -63,7 +61,7 @@ cp appsettings.json appsettings.Development.json
 
 Then edit appsettings.Development.json with your actual connection string based on the comments in the file.
 
-3. Run the Project
+### 3. Run the Project
 Open the solution in Visual Studio 2022, restore NuGet packages, and hit Run.
 
 Make sure you have:
@@ -74,14 +72,14 @@ Access to the Microsoft SQL Server database you're connecting to
 
 ---
 
-🛡 Security
+## 🛡 Security
 Your actual database connection is not exposed.
 
 The .gitignore file excludes appsettings.Development.json from being tracked by Git.
 
 ---
 
-📌 Notes
+## 📌 Notes
 This project uses Telerik UI components, so you need an active license.
 
 Default plant and location are pre-selected on load (e.g., PN1 and Ground Floor).
@@ -90,5 +88,5 @@ Charts and filters are built to match internal Figma designs.
 
 ---
 
-📄 License
+## 📄 License
 This project is maintained internally and is not currently under a public license. Contributions are welcomed.
