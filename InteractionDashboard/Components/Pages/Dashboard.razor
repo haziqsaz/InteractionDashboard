@@ -77,9 +77,11 @@
     </div>
 
     <div class="kpi-card">
-        <h6>Average Duration Per Interaction (minutes)</h6>
-        <p class="kpi-value @GetColorClass(avgDuration / 60, 0.16, 0.5)">
-            @((avgDuration / 60).ToString("0.00"))
+        <h6>Average Duration Per Interaction (seconds)</h6>
+        <p class="kpi-value @GetColorClass(avgDuration, 10, 15)">
+            @((avgDuration).ToString("0"))
+            @* Convert to Minutes--> class="kpi-value @GetColorClass(avgDuration / 60, 0.16, 0.5)">
+            @((avgDuration / 60).ToString("0.00")) *@
         </p>
     </div>
 </div>
@@ -158,11 +160,11 @@
         </ChartCategoryAxes>
         <ChartValueAxes>
             <ChartValueAxis>
-                <ChartValueAxisTitle Text="Average Duration (min)" />
+                <ChartValueAxisTitle Text="Average Duration (seconds)" />
             </ChartValueAxis>
         </ChartValueAxes>
 
-        <ChartTitle Text="Average Viewing Duration Per Day (minutes)" />
+        <ChartTitle Text="Average Viewing Duration Per Day (seconds)" />
         <ChartZoomable Enabled="true">
             <ChartZoomableMousewheel Enabled="true" Rate="0.3" />
             <ChartZoomableSelection Enabled="true" Key="@ChartZoomableSelectionKey.Ctrl" />
@@ -255,10 +257,10 @@
 
     <ChartValueAxes>
             <ChartValueAxis Color="#287BBF">
-            <ChartValueAxisTitle Text="Average Duration (min)" />
+            <ChartValueAxisTitle Text="Average Duration (seconds)" />
         </ChartValueAxis>
             <ChartValueAxis Name="interactionsAxis" Color="#10D8BD">
-            <ChartValueAxisTitle Text="Interactions" />
+            <ChartValueAxisTitle Text="Interaction Count" />
             
         </ChartValueAxis>
     </ChartValueAxes>
@@ -502,7 +504,7 @@
         // Line chart - Average viewing duration per day
         var durationData = await query
             .GroupBy(i => i.StartTime.Date)
-            .Select(g => new { Date = g.Key, Avg = g.Average(x => (double)x.Duration) / 60.0 })
+            .Select(g => new { Date = g.Key, Avg = g.Average(x => (double)x.Duration) }) // Avg = g.Average(x => (double)x.Duration) / 60.0 --> Convert to Minutes
             .ToListAsync();
 
                 if (IncludeZeroDates)
@@ -549,7 +551,7 @@
         {
             Date = g.Key,
             Interactions = g.Count(),
-            AvgDuration = g.Average(x => (double)x.Duration) / 60.0
+            AvgDuration = g.Average(x => (double)x.Duration) //Convert to minutes --> AvgDuration = g.Average(x => (double)x.Duration) / 60.0
         })
         .ToListAsync();
 
