@@ -101,6 +101,7 @@
                          CategoryField="Label"
                          Color="#0D66FF">
                 <ChartSeriesTooltip Visible="true" />
+                <ChartSeriesLabels Visible="true" Format="{0}"></ChartSeriesLabels>
             </ChartSeries>
         </ChartSeriesItems>
         <ChartCategoryAxes>
@@ -148,6 +149,8 @@
                          CategoryField="Label"
                          Color="#7C40FF" >
                 <ChartSeriesTooltip Visible="true" />
+                <ChartSeriesLabels Visible="true" Format="{0}"></ChartSeriesLabels>
+
             </ChartSeries>
         </ChartSeriesItems>
         <ChartCategoryAxes>
@@ -590,9 +593,9 @@
     // Heatmap colours
     private string GetHeatColor(int value)
     {
-        if (value <= 10) return "#D5FFD3";
-        else if (value <= 20) return "#A7FFA2";
-        else if (value <= 30) return "#66FF5D";
+        if (value <= 9) return "#D5FFD3";
+        else if (value <= 24) return "#A7FFA2";
+        else if (value <= 34) return "#66FF5D";
         else return "#0FFD01";
     }
 
