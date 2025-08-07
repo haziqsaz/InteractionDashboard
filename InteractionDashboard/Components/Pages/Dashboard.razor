@@ -120,8 +120,8 @@
 
         <ChartTitle Text="Interactions Per Day" />
         <ChartZoomable Enabled="true">
-            <ChartZoomableMousewheel Enabled="true" Rate="0.3" />
-            <ChartZoomableSelection Enabled="true" Key="@ChartZoomableSelectionKey.Ctrl" />
+            <ChartZoomableMousewheel Enabled="true" Rate="0.3" Lock="@ChartAxisLock.Y"/>
+            <ChartZoomableSelection Enabled="true" Key="@ChartZoomableSelectionKey.Ctrl" Lock="@ChartAxisLock.Y"/>
         </ChartZoomable>
         <ChartPannable Enabled="true" />
 
@@ -166,8 +166,8 @@
 
         <ChartTitle Text="Average Viewing Duration Per Day (seconds)" />
         <ChartZoomable Enabled="true">
-            <ChartZoomableMousewheel Enabled="true" Rate="0.3" />
-            <ChartZoomableSelection Enabled="true" Key="@ChartZoomableSelectionKey.Ctrl" />
+            <ChartZoomableMousewheel Enabled="true" Rate="0.3" Lock="@ChartAxisLock.Y" />
+            <ChartZoomableSelection Enabled="true" Key="@ChartZoomableSelectionKey.Ctrl" Lock="@ChartAxisLock.Y" />
         </ChartZoomable>
         <ChartPannable Enabled="true" />
 
@@ -279,8 +279,8 @@
     <ChartTitle Text="Interactions and The Average Viewing Duration" />
 
     <ChartZoomable Enabled="true">
-        <ChartZoomableMousewheel Enabled="true" Rate="0.3" />
-        <ChartZoomableSelection Enabled="true" Key="@ChartZoomableSelectionKey.Ctrl" />
+            <ChartZoomableMousewheel Enabled="true" Rate="0.3" Lock="@ChartAxisLock.Y" />
+        <ChartZoomableSelection Enabled="true" Key="@ChartZoomableSelectionKey.Ctrl" Lock="@ChartAxisLock.Y" />
     </ChartZoomable>
     <ChartPannable Enabled="true" />
 
