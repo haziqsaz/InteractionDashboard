@@ -91,5 +91,9 @@ Charts and filters are built to match internal Figma designs.
 ## 📄 License
 This project is maintained internally and is not currently under a public license. Contributions are welcomed.
 
+---
 
 <img width="946" height="460" alt="image" src="https://github.com/user-attachments/assets/b2fdb6d3-6d27-454d-a600-f8e1c80991d7" />
+<img width="954" height="463" alt="image" src="https://github.com/user-attachments/assets/82f3ed33-a515-459d-99d2-8cfabfa5a501" />
+<img width="952" height="458" alt="image" src="https://github.com/user-attachments/assets/07052f6e-12af-4fad-9b74-cf921f34a67c" />
+
